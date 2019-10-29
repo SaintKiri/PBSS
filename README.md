@@ -12,6 +12,7 @@ java PBSSdriver.java
 3. voilà
 
 # Copyright
+See license [here](LICENSE.md)
 
 # Contributing
 See code of conduct [here](CODE-OF-CONDUCT.md)
