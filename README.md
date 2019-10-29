@@ -14,3 +14,4 @@ java PBSSdriver.java
 # Copyright
 
 # Contributing
+See code of conduct [here](CODE-OF-CONDUCT.md)
