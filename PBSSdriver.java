@@ -15,7 +15,7 @@ public class PBSSdriver {
     public static void main(String[] args) {
         // Display version
         String welcome = "Welcome to the PBSS (Pitt Badminton Sign-up System)" +
-                        "\nThis software is in beta version";
+                        "\nVersion 1.0";
         JOptionPane.showMessageDialog(null
                                     , welcome
                                     , "Welcome"
