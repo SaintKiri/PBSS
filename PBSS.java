@@ -36,6 +36,7 @@ public class PBSS extends JPanel {
 	private Dimension matchDimension;
 	private Dimension waitingDimension;
 	private Dimension windowDimension;
+	private final String CLICKTOADD = "Click to Add";
 	// Parameters
 	private final int maxPlayers = 4;
 	private final int boxHeight = 80;
@@ -46,12 +47,10 @@ public class PBSS extends JPanel {
 		// Initializations
 		rule = new JLabel("<html>Rules: <br> 1. Your name will appear in the waiting list only once<br><html>" 
 						+ "<html>2. You needs to click the \"Done\" button after you are done playing<br><html>" 
-						+ "<html>3. You may only play 1 set (21 points to win with 2 points lead, 30 points to win) if there is someone waiting after you!<br><html>" 
-						+ "<html>4. You may sign up at 2 courts at the same time, unless you have the timing on each court right<br><html>"
-						, SwingConstants.LEFT);
+						+ "<html>3. You may only play 1 set if there is someone waiting after you!<br><html>" 
+						+ "<html>4. You may not sign up at 2 courts at the same time, unless you have the timing on each court right<br><html>");
 		rule.setFont(new Font("Serif", Font.BOLD, 15));
 		rule.setForeground(Color.red);
-		rule.setBackground(Color.GRAY);
 		matchPlayers = new JLabel[maxPlayers];
 		waitingPlayers = new JButton[maxWaiting][maxPlayers];
 		done = new JButton("Done");
@@ -92,7 +91,7 @@ public class PBSS extends JPanel {
 		// Add Stuff
 		for (int x = 0; x < waitingPlayers.length; x++) {
 			for (int y = 0; y < waitingPlayers[x].length; y++) {
-				waitingPlayers[x][y] = new JButton("Click to Add");
+				waitingPlayers[x][y] = new JButton(CLICKTOADD);
 				waitingPlayers[x][y].setFont(new Font("Sans Serif", Font.PLAIN, 20));
 				waitingPlayers[x][y].addActionListener(new AddPlayers());
 				waiting.add(waitingPlayers[x][y]);
@@ -112,52 +111,61 @@ public class PBSS extends JPanel {
 	}
 	
 	// Button Done
-	private void matchDone() {
-		for (int i = 0; i < matchPlayers.length; i++) {
-			if (waitingPlayers[0][i].getText().equals("Click to Add")) {
-				// Catch empty spots
-				matchPlayers[i].setText("Empty");
-			} else {
-				// Move the first waiting pairs to the playing pairs
-				matchPlayers[i].setText(waitingPlayers[0][i].getText());
-			}
-		}
-		for (int i = 0; i < waitingPlayers.length-1; i++) {
-			for (int n = 0; n < waitingPlayers[i].length; n++) {
-				// Move everyone 1 spot forward
-				waitingPlayers[i][n].setText(waitingPlayers[i+1][n].getText());
-			}
-		}
-		for (int i = 0; i < waitingPlayers[9].length; i++) {
-			// Reset last row
-			waitingPlayers[9][i].setText("Click to Add");
-		}
-	}
 	private class Done implements ActionListener {
 		public void actionPerformed (ActionEvent p) {
-			matchDone();
+			for (int i = 0; i < matchPlayers.length; i++) {
+				if (waitingPlayers[0][i].getText().equals(CLICKTOADD)) {
+					// Catch empty spots
+					matchPlayers[i].setText("Empty");
+				} else {
+					// Move the first waiting pairs to the playing pairs
+					matchPlayers[i].setText(waitingPlayers[0][i].getText());
+				}
+			}
+			for (int i = 0; i < waitingPlayers.length-1; i++) {
+				for (int n = 0; n < waitingPlayers[i].length; n++) {
+					// Move everyone 1 spot forward
+					waitingPlayers[i][n].setText(waitingPlayers[i+1][n].getText());
+				}
+			}
+			for (int i = 0; i < waitingPlayers[9].length; i++) {
+				waitingPlayers[9][i].setText(CLICKTOADD); // Reset last row
+			}
 		}
 	}
 
 	// Button Add
-	private void addPlayer(ActionEvent p) {
-		for (int x = 0; x < waitingPlayers.length; x++) {
-			for (int y = 0; y < waitingPlayers[x].length; y++) {
-				if (p.getSource() == waitingPlayers[x][y] && waitingPlayers[x][y].getText() == "Click to Add") {
-					String temp = JOptionPane.showInputDialog(null, "Enter your name");
-					if (temp.equals("")) {
-						// If cancel is clicked
-						temp = "Click to Add";
+	private class AddPlayers implements ActionListener {
+		public void actionPerformed (ActionEvent p) {
+			for (int x = 0; x < waitingPlayers.length; x++) {
+				for (int y = 0; y < waitingPlayers[x].length; y++) {
+					if (p.getSource() == waitingPlayers[x][y] && waitingPlayers[x][y].getText() == CLICKTOADD) {
+						String temp = JOptionPane.showInputDialog(null
+																, "Enter your name"
+																, "Name"
+																, JOptionPane.INFORMATION_MESSAGE);
+						if (checkRepeat(temp))
+							JOptionPane.showMessageDialog(null
+														, "You cannot enter your name twice!"
+														, "Input error"
+														, JOptionPane.ERROR_MESSAGE);
+						if (temp == null || temp.isEmpty() || checkRepeat(temp))
+							temp = CLICKTOADD;
+						waitingPlayers[x][y].setText(temp);
+						break; // No need to run through entire list after adding name
 					}
-					waitingPlayers[x][y].setText(temp);
 				}
 			}
 		}
 	}
-	private class AddPlayers implements ActionListener {
-		public void actionPerformed (ActionEvent p) {
-			addPlayer(p);
+	private boolean checkRepeat(String name) { // Helper method
+		for (int x = 0; x < waitingPlayers.length; x++) {
+			for (int y = 0; y < waitingPlayers[x].length; y++) {
+				if (waitingPlayers[x][y].getText().equals(name)) 
+					return true;
+			}
 		}
+		return false;
 	}
 
 } // End of File

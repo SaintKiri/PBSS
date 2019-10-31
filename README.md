@@ -1,5 +1,6 @@
 # PBSS (Pitt Badminton Sign-up System)
-A program that replaces the sign-up sheet of Pitt's badminton club
+A program that replaces the sign-up sheet of Pitt's badminton club  
+**Current Version: 1.0**
 
 # How to use
 (Assuming you have java installed)  

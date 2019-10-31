@@ -16,10 +16,13 @@ public class PBSSdriver {
         // Display version
         String welcome = "Welcome to the PBSS (Pitt Badminton Sign-up System)" +
                         "\nThis software is in beta version";
-        JOptionPane.showMessageDialog(null, welcome);
+        JOptionPane.showMessageDialog(null
+                                    , welcome
+                                    , "Welcome"
+                                    , JOptionPane.INFORMATION_MESSAGE);
 
         // The window & properties
-        JFrame PBSSWindow = new JFrame("Pitt Badminton Sign-up System | Version: Beta");
+        JFrame PBSSWindow = new JFrame("Pitt Badminton Sign-up System | Version: 1.0");
         PBSSWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         PBSSWindow.setResizable(false);
 
