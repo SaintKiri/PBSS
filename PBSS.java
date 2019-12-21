@@ -28,7 +28,7 @@ public class PBSS extends JPanel {
 	private JPanel waiting;
 	// Displays
 	private JLabel rule;
-	private JLabel[] matchPlayers;
+	private JButton[] matchPlayers;
 	private JButton[][] waitingPlayers;
 	private JButton done;
 	// Display parameters
@@ -37,30 +37,35 @@ public class PBSS extends JPanel {
 	private Dimension waitingDimension;
 	private Dimension windowDimension;
 	private final String CLICKTOADD = "Click to Add";
+	private Font ADDFONT;
+	private Font PLAYERFONT;
 	// Parameters
 	private final int maxPlayers = 4;
 	private final int boxHeight = 80;
 	private final int boxWidth = 200;
-	private final int maxWaiting = 10;
+	private final int maxWaiting = 7;
 
     public PBSS() {
 		// Initializations
-		rule = new JLabel("<html>Rules: <br> 1. Your name will appear in the waiting list only once<br><html>" 
-						+ "<html>2. You needs to click the \"Done\" button after you are done playing<br><html>" 
-						+ "<html>3. You may only play 1 set if there is someone waiting after you!<br><html>" 
-						+ "<html>4. You may not sign up at 2 courts at the same time, unless you have the timing on each court right<br><html>");
+		rule = new JLabel("<html>Rules: <br><html>" 
+						+ "<html> You needs to click the \"Done\" button after you are done playing <br><html>" 
+						+ "<html> You may only play 1 set if there is someone waiting after you! <br><html>" 
+						+ "<html> You may not sign up at 2 courts at the same time, unless you have the timing on each court right <br><html>");
 		rule.setFont(new Font("Serif", Font.BOLD, 15));
 		rule.setForeground(Color.red);
-		matchPlayers = new JLabel[maxPlayers];
+		matchPlayers = new JButton[maxPlayers];
 		waitingPlayers = new JButton[maxWaiting][maxPlayers];
 		done = new JButton("Done");
 		done.setFont(new Font("Sans Serif", Font.BOLD, 50));
 		done.setForeground(Color.red);
 		// Dimensions
-		rulesDimension = new Dimension((maxPlayers+1)*boxWidth, boxHeight+30);
+		rulesDimension = new Dimension((maxPlayers+1)*boxWidth, boxHeight+20);
 		matchDimension = new Dimension((maxPlayers+1)*boxWidth, boxHeight);
 		waitingDimension = new Dimension(maxPlayers*boxWidth, maxWaiting*boxHeight);
-		windowDimension = new Dimension((maxPlayers+1)*boxWidth, (maxWaiting+2)*boxHeight+50);
+		windowDimension = new Dimension((maxPlayers+1)*boxWidth, (maxWaiting+2)*boxHeight+40);
+		// Fonts
+		ADDFONT = new Font("Sans Serif", Font.PLAIN, 30);
+		PLAYERFONT = new Font("Sans Serif", Font.BOLD, 35);
 
 		// Rules Panel
 		rules = new JPanel();
@@ -74,9 +79,10 @@ public class PBSS extends JPanel {
 		match = new JPanel();
 		// Add Stuff
 		for (int i = 0; i < matchPlayers.length; i++) {
-			matchPlayers[i] = new JLabel("Player", SwingConstants.CENTER);
-			matchPlayers[i].setFont(new Font("Serif", Font.BOLD, 40));
+			matchPlayers[i] = new JButton("Player");
+			matchPlayers[i].setFont(PLAYERFONT);
 			matchPlayers[i].setForeground(Color.ORANGE);
+			matchPlayers[i].setBackground(Color.WHITE);
 			match.add(matchPlayers[i]);
 		}
 		done.addActionListener(new Done());
@@ -92,7 +98,8 @@ public class PBSS extends JPanel {
 		for (int x = 0; x < waitingPlayers.length; x++) {
 			for (int y = 0; y < waitingPlayers[x].length; y++) {
 				waitingPlayers[x][y] = new JButton(CLICKTOADD);
-				waitingPlayers[x][y].setFont(new Font("Sans Serif", Font.PLAIN, 20));
+				waitingPlayers[x][y].setFont(ADDFONT);
+				waitingPlayers[x][y].setBackground(Color.WHITE);
 				waitingPlayers[x][y].addActionListener(new AddPlayers());
 				waiting.add(waitingPlayers[x][y]);
 			}
@@ -128,8 +135,8 @@ public class PBSS extends JPanel {
 					waitingPlayers[i][n].setText(waitingPlayers[i+1][n].getText());
 				}
 			}
-			for (int i = 0; i < waitingPlayers[9].length; i++) {
-				waitingPlayers[9][i].setText(CLICKTOADD); // Reset last row
+			for (int i = 0; i < waitingPlayers[maxWaiting-1].length; i++) {
+				waitingPlayers[maxWaiting-1][i].setText(CLICKTOADD); // Reset last row
 			}
 		}
 	}
@@ -144,14 +151,20 @@ public class PBSS extends JPanel {
 																, "Enter your name"
 																, "Name"
 																, JOptionPane.INFORMATION_MESSAGE);
-						if (checkRepeat(temp))
+						if (temp == null)
+							temp = CLICKTOADD;
+						else 
+							temp = temp.substring(0, 1).toUpperCase() + temp.substring(1).toLowerCase();
+						if (checkRepeat(temp) && temp != CLICKTOADD)
 							JOptionPane.showMessageDialog(null
 														, "You cannot enter your name twice!"
 														, "Input error"
 														, JOptionPane.ERROR_MESSAGE);
-						if (temp == null || temp.isEmpty() || checkRepeat(temp))
-							temp = CLICKTOADD;
-						waitingPlayers[x][y].setText(temp);
+						else 
+							waitingPlayers[x][y].setText(temp);
+						break; // No need to run through entire list after adding name
+					} else if (p.getSource() == waitingPlayers[x][y] && waitingPlayers[x][y].getText() != CLICKTOADD) {
+						waitingPlayers[x][y].setText(CLICKTOADD);
 						break; // No need to run through entire list after adding name
 					}
 				}
@@ -161,7 +174,7 @@ public class PBSS extends JPanel {
 	private boolean checkRepeat(String name) { // Helper method
 		for (int x = 0; x < waitingPlayers.length; x++) {
 			for (int y = 0; y < waitingPlayers[x].length; y++) {
-				if (waitingPlayers[x][y].getText().equals(name)) 
+				if (waitingPlayers[x][y].getText().equals(name))
 					return true;
 			}
 		}
