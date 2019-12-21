@@ -4,7 +4,7 @@ A program that replaces the sign-up sheet of Pitt's badminton club
 
 # How to use
 (Assuming you have java installed)  
-Download PBSS-VB.jar and double click on it
+Download PBSS.jar and double click on it
 
 # Patch Notes v1.1
 **Patch notes v1.1:**  
