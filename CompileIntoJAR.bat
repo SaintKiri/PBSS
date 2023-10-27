@@ -1,0 +1,1 @@
+jar -cmvf MANIFEST.mf PBSS.jar *.class
